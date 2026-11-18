@@ -1,0 +1,18 @@
+FAIL  SPA route /  -> HTTP 000
+PASS  SPA route /movies
+PASS  SPA route /movies/abc123
+PASS  SPA route /movies/abc123/2026-11-20
+PASS  SPA route /my-bookings
+PASS  SPA route /favorite
+PASS  SPA route /admin
+PASS  SPA route /admin/add-shows
+PASS  asset /assets/index-KTat_nWf.js 200
+PASS  asset content-type javascript
+PASS  asset long cache
+PASS  index.html no-cache
+PASS  header X-Content-Type-Options
+PASS  Nginx version hidden
+PASS  /healthz
+PASS  GET /api/show/all via Nginx
+------------------------------
+PASS=15  FAIL=1  (base: http://localhost:8080, 2026-11-18 09:14)

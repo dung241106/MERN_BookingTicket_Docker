@@ -11,3 +11,9 @@
 backups/
 *.log
 .DS_Store
+
+# Handoff / secrets / backups (never commit)
+private-handoff/
+handoff/
+backups/
+*.gpg
