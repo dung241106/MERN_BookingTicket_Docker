@@ -1,0 +1,24 @@
+== Thời điểm: Thu Nov 19 01:17:38 AM +07 2026
+== Phiên bản
+Docker version 29.10.0, build fdd4b8e
+Docker Compose version v5.8.0
+== Trạng thái container
+NAME                IMAGE           COMMAND                  SERVICE   CREATED              STATUS                        PORTS
+quickshow-api-1     quickshow-api   "docker-entrypoint.s…"   api       About a minute ago   Up 58 seconds (healthy)       127.0.0.1:3000->3000/tcp
+quickshow-mongo-1   mongo:8.0       "docker-entrypoint.s…"   mongo     About a minute ago   Up About a minute (healthy)   27017/tcp
+quickshow-web-1     quickshow-web   "/docker-entrypoint.…"   web       About a minute ago   Up 51 seconds (healthy)       0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+== Volume còn lại sau down/up (không dùng -v)
+local     quickshow_mongo_data
+== Health
+{"status":"healthy","database":"connected"}
+web /healthz: HTTP 200
+== Số document sau restart
+movies 14
+bookings 11
+shows 21
+users 3
+
+== Ghi chú
+- Restore từ snapshot gốc: movies 14, bookings 9, shows 21, users 3 (47 documents, 0 failures).
+- Sau đó 21 suất chiếu được dời lên tương lai (snapshot gốc đã quá hạn nên API /api/show/all trả rỗng).
+- bookings tăng từ 9 lên 11 do thao tác thử chọn ghế trên giao diện; dữ liệu vẫn tồn tại sau compose down/up (không dùng -v).
