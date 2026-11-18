@@ -12,14 +12,39 @@ import adminRouter from "./routes/adminRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import { protectAdmin } from "./middleware/auth.js";
 import { stripeWebhooks } from "./controllers/stripeWebhooks.js";
-
+import mongoose from "mongoose";
 const app = express();
 app.post("/api/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 app.use(express.json());
 const origins = (process.env.FRONTEND_URL || "http://localhost:5173").split(",").map((url) => url.trim().replace(/\/$/, ""));
 app.use(cors({ origin: origins }));
 app.get("/", (req, res) => res.send("Server is live"));
+app.get("/health", (req, res) => {
+  const connected = mongoose.connection.readyState === 1;
+
+  res.status(connected ? 200 : 503).json({
+    status: connected ? "healthy" : "unhealthy",
+    database: connected ? "connected" : "disconnected",
+  });
+});
 app.use(clerkMiddleware());
+app.use((err, req, res, next) => {
+  const authHeader = req.get("authorization") || "";
+
+  const invalidClerkJwt =
+    /^Bearer\s+\S+/i.test(authHeader) &&
+    err instanceof SyntaxError &&
+    /@clerk\/(backend|express)/.test(err.stack || "");
+
+  if (invalidClerkJwt) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid authentication token",
+    });
+  }
+
+  next(err);
+});
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/show", showRouter);
 app.use("/api/booking", bookingRouter);

@@ -1,0 +1,74 @@
+
+
+name: quickshow-backend-lab
+
+services:
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+
+    volumes:
+      - mongo_data:/data/db
+
+    networks:
+      - backend_net
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          mongosh --quiet
+          -u "$$MONGO_INITDB_ROOT_USERNAME"
+          -p "$$MONGO_INITDB_ROOT_PASSWORD"
+          --authenticationDatabase admin
+          --eval 'db.adminCommand({ping:1}).ok'
+          | grep -q 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+
+    env_file:
+      - .env
+
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      MONGODB_URL: "mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/quickshow?authSource=admin"
+
+    ports:
+      - "127.0.0.1:3000:3000"
+
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+    networks:
+      - backend_net
+
+    restart: unless-stopped
+
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  backend_net:
+    driver: bridge
+
+volumes:
+  mongo_data:
