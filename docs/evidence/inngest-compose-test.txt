@@ -1,0 +1,23 @@
+== Thời điểm: Thu Nov 19 01:27:55 AM +07 2026
+== Trạng thái container (có inngest)
+NAME                  IMAGE             COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+quickshow-api-1       quickshow-api     "docker-entrypoint.s…"   api       11 minutes ago   Up 11 minutes (healthy)   127.0.0.1:3000->3000/tcp
+quickshow-inngest-1   inngest/inngest   "inngest dev -u http…"   inngest   4 minutes ago    Up 4 minutes              127.0.0.1:8288->8288/tcp
+quickshow-mongo-1     mongo:8.0         "docker-entrypoint.s…"   mongo     11 minutes ago   Up 11 minutes (healthy)   27017/tcp
+quickshow-web-1       quickshow-web     "/docker-entrypoint.…"   web       11 minutes ago   Up 11 minutes (healthy)   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+== Inngest UI
+HTTP 200
+== Inngest log (10 dòng cuối)
+inngest-1  | {"time":"2026-11-18T18:23:47.998357613Z","level":"INFO","msg":"service starting","caller":"lease-scavenger","service":"lease-scavenger"}
+inngest-1  | {"time":"2026-11-18T18:23:47.998419437Z","level":"INFO","msg":"service starting","caller":"api","service":"api"}
+inngest-1  | {"time":"2026-11-18T18:23:48.021882331Z","level":"INFO","msg":"starting server","caller":"api","addr":"0.0.0.0:8288"}
+inngest-1  | {"time":"2026-11-18T18:23:47.998566821Z","level":"INFO","msg":"service starting","caller":"devserver","service":"devserver"}
+inngest-1  | {"time":"2026-11-18T18:23:48.015575985Z","level":"INFO","msg":"Executor started in assignedQueueShard Mode","queue_shard":"default"}
+inngest-1  | {"time":"2026-11-18T18:23:48.0252088Z","level":"INFO","msg":"service starting","caller":"runner","service":"runner"}
+inngest-1  | {"time":"2026-11-18T18:23:48.054388688Z","level":"INFO","msg":"subscribing to events","topic":"events"}
+inngest-1  | {"time":"2026-11-18T18:23:53.025940184Z","level":"INFO","msg":"apps synced, disabling auto-discovery"}
+inngest-1  | {"time":"2026-11-18T18:25:00.125564055Z","level":"INFO","msg":"received event","event":"inngest/scheduled.timer","event_id":"2026-11-18T18:25:00Z","internal_id":"01M7QYFB3E936EWGKJA4WWH9QE"}
+inngest-1  | {"time":"2026-11-18T18:25:02.438838603Z","level":"INFO","msg":"received event","event":"inngest/function.finished","event_id":"01M7QYFD82RT1FG17VBY95QZ3P","internal_id":"01M7QYFD828PFE4MWJ1MKRTDCH"}
+== Ghi chú
+Inngest Dev Server chạy local trong compose tổng, kết nối api qua backend_net (alias quickshow-inngest-dev).
+Function recover-pending-bookings chạy theo cron */5 phút, trạng thái Completed.

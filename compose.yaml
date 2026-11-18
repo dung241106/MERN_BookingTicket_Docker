@@ -75,6 +75,20 @@ services:
       retries: 5
       start_period: 10s
 
+  inngest:
+    image: inngest/inngest
+    command: inngest dev -u http://api:3000/api/inngest
+    ports:
+      - "127.0.0.1:8288:8288"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      backend_net:
+        aliases:
+          - quickshow-inngest-dev
+    restart: unless-stopped
+
 networks:
   backend_net:
     driver: bridge
